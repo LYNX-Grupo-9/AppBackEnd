@@ -1,24 +1,26 @@
-package com.exemple.adapter.backapp.core.domain;
+package com.exemple.adapter.backapp.infrastructure.persistence.jpa.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Conversa {
+@Entity
+@Table(name = "conversa")
+public class ConversaEntity {
 
+    @Id
     private UUID idConversa;
+
     private UUID idCliente;
     private UUID idAdvogado;
     private UUID idCaso;
 
     private LocalDateTime criadoEm;
 
-    public Conversa(UUID idConversa, UUID idCliente, UUID idAdvogado, UUID idCaso, LocalDateTime criadoEm) {
-        this.idConversa = idConversa;
-        this.idCliente = idCliente;
-        this.idAdvogado = idAdvogado;
-        this.idCaso = idCaso;
-        this.criadoEm = criadoEm;
-    }
+    public ConversaEntity() {}
 
     public UUID getIdConversa() {
         return idConversa;
@@ -58,16 +60,5 @@ public class Conversa {
 
     public void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
-    }
-
-    public static Conversa criarNovo(UUID idCliente, UUID idAdvogado, UUID idCaso) {
-
-        return new Conversa(
-                UUID.randomUUID(),
-                idCliente,
-                idAdvogado,
-                idCaso,
-                LocalDateTime.now()
-        );
     }
 }

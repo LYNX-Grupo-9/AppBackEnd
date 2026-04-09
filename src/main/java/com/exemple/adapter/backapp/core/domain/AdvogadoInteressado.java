@@ -17,6 +17,30 @@ public class AdvogadoInteressado {
         this.definitivo = definitivo;
     }
 
+    public UUID getAdvogadoId() {
+        return advogadoId;
+    }
+
+    public void setAdvogadoId(UUID advogadoId) {
+        this.advogadoId = advogadoId;
+    }
+
+    public UUID getCasoId() {
+        return casoId;
+    }
+
+    public void setCasoId(UUID casoId) {
+        this.casoId = casoId;
+    }
+
+    public Boolean getDefinitivo() {
+        return definitivo;
+    }
+
+    public void setDefinitivo(Boolean definitivo) {
+        this.definitivo = definitivo;
+    }
+
     public void tornarDefinitivo() {
         this.definitivo = true;
     }
