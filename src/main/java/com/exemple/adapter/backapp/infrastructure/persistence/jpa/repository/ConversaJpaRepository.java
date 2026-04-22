@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ConversaJpaRepository extends JpaRepository<ConversaEntity, UUID> {
-    List<ConversaEntity> findByIdCliente(UUID idCliente);
-    List<ConversaEntity> findByIdAdvogado(UUID idAdvogado);
+    List<ConversaEntity> findByIdClienteOrderByCriadoEmDesc(UUID idCliente);
+    List<ConversaEntity> findByIdAdvogadoOrderByCriadoEmDesc(UUID idAdvogado);
+    boolean existsByIdClienteAndIdAdvogadoAndIdCaso(UUID idCliente, UUID idAdvogado, UUID idCaso);
 
 }

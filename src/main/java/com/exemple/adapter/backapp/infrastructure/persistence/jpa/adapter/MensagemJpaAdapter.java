@@ -36,7 +36,7 @@ public class MensagemJpaAdapter implements MensagemGateway {
 
     @Override
     public List<Mensagem> buscarPorConversa(UUID idConversa) {
-        return repository.findByIdConversa(idConversa)
+        return repository.findByIdConversaOrderByEnviadoEmAsc(idConversa)
                 .stream()
                 .map(MensagemMapper::toDomain)
                 .toList();

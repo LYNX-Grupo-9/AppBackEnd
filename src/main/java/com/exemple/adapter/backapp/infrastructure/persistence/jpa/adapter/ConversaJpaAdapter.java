@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -35,8 +36,14 @@ public class ConversaJpaAdapter implements ConversaGateway {
     }
 
     @Override
+    public Optional<Conversa> buscarPorId(UUID idConversa) {
+        return repository.findById(idConversa)
+                .map(ConversaMapper::toDomain);
+    }
+
+    @Override
     public List<Conversa> buscarPorCliente(UUID idCliente) {
-        return repository.findByIdCliente(idCliente)
+        return repository.findByIdClienteOrderByCriadoEmDesc(idCliente)
                 .stream()
                 .map(ConversaMapper::toDomain)
                 .toList();
@@ -44,9 +51,14 @@ public class ConversaJpaAdapter implements ConversaGateway {
 
     @Override
     public List<Conversa> buscarPorAdvogado(UUID idAdvogado) {
-        return repository.findByIdAdvogado(idAdvogado)
+        return repository.findByIdAdvogadoOrderByCriadoEmDesc(idAdvogado)
                 .stream()
                 .map(ConversaMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public boolean existePorParticipantesECaso(UUID idCliente, UUID idAdvogado, UUID idCaso) {
+        return repository.existsByIdClienteAndIdAdvogadoAndIdCaso(idCliente, idAdvogado, idCaso);
     }
 }

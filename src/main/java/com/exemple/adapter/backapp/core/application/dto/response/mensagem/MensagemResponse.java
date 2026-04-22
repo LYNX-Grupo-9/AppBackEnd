@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record EnviarMensagemResponse(
-        @Schema(description = "UUID da mensagem enviada", example = "55555555-5555-5555-5555-555555555555")
+public record MensagemResponse(
+        @Schema(description = "UUID da mensagem", example = "55555555-5555-5555-5555-555555555555")
         UUID idMensagem,
-        @Schema(description = "UUID da conversa onde a mensagem foi enviada", example = "11111111-1111-1111-1111-111111111111")
+        @Schema(description = "UUID da conversa", example = "11111111-1111-1111-1111-111111111111")
         UUID idConversa,
         @Schema(description = "Conteúdo da mensagem", example = "Olá, tudo bem?")
         String conteudo,

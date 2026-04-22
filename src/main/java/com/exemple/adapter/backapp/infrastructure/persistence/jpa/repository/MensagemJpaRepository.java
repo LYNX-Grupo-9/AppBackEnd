@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MensagemJpaRepository extends JpaRepository<MensagemEntity, UUID> {
-    List<MensagemEntity> findByIdConversa(UUID idConversa);
+    List<MensagemEntity> findByIdConversaOrderByEnviadoEmAsc(UUID idConversa);
 }
