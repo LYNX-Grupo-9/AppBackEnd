@@ -3,6 +3,7 @@ package com.exemple.adapter.backapp.infrastructure.web.controller;
 import com.exemple.adapter.backapp.core.application.dto.command.caso.CriarCasoCommand;
 import com.exemple.adapter.backapp.core.application.dto.response.caso.CriarCasoResponse;
 import com.exemple.adapter.backapp.core.application.usecase.Caso.CriarCasoUseCase;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/casos")
+@SecurityRequirement(name = "Bearer")
 public class CasoController {
 
     private final CriarCasoUseCase useCase;
