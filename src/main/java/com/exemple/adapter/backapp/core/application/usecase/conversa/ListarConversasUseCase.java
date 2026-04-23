@@ -9,34 +9,32 @@ import java.util.UUID;
 public class ListarConversasUseCase {
 
     private final ConversaGateway conversaGateway;
+    private final ConversaResponseAssembler conversaResponseAssembler;
 
-    public ListarConversasUseCase(ConversaGateway conversaGateway) {
+    public ListarConversasUseCase(ConversaGateway conversaGateway,
+                                  ConversaResponseAssembler conversaResponseAssembler) {
         this.conversaGateway = conversaGateway;
+        this.conversaResponseAssembler = conversaResponseAssembler;
     }
 
     public List<ConversaResponse> listarPorCliente(UUID idCliente) {
         return conversaGateway.buscarPorCliente(idCliente)
                 .stream()
-                .map(conversa -> new ConversaResponse(
-                        conversa.getIdConversa(),
-                        conversa.getIdCliente(),
-                        conversa.getIdAdvogado(),
-                        conversa.getIdCaso(),
-                        conversa.getCriadoEm()
-                ))
+                .map(conversaResponseAssembler::montar)
                 .toList();
     }
 
     public List<ConversaResponse> listarPorAdvogado(UUID idAdvogado) {
         return conversaGateway.buscarPorAdvogado(idAdvogado)
                 .stream()
-                .map(conversa -> new ConversaResponse(
-                        conversa.getIdConversa(),
-                        conversa.getIdCliente(),
-                        conversa.getIdAdvogado(),
-                        conversa.getIdCaso(),
-                        conversa.getCriadoEm()
-                ))
+                .map(conversaResponseAssembler::montar)
+                .toList();
+    }
+
+    public List<ConversaResponse> listarPorCaso(UUID idCaso) {
+        return conversaGateway.buscarPorCaso(idCaso)
+                .stream()
+                .map(conversaResponseAssembler::montar)
                 .toList();
     }
 }

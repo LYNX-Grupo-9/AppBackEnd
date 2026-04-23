@@ -11,5 +11,6 @@ public interface ConversaGateway {
     Optional<Conversa> buscarPorId(UUID idConversa);
     List<Conversa> buscarPorCliente(UUID idCliente);
     List<Conversa> buscarPorAdvogado(UUID idAdvogado);
+    List<Conversa> buscarPorCaso(UUID idCaso);
     boolean existePorParticipantesECaso(UUID idCliente, UUID idAdvogado, UUID idCaso);
 }

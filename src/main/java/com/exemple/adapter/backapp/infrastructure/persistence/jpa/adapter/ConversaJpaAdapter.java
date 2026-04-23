@@ -58,6 +58,14 @@ public class ConversaJpaAdapter implements ConversaGateway {
     }
 
     @Override
+    public List<Conversa> buscarPorCaso(UUID idCaso) {
+        return repository.findByIdCasoOrderByCriadoEmDesc(idCaso)
+                .stream()
+                .map(ConversaMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public boolean existePorParticipantesECaso(UUID idCliente, UUID idAdvogado, UUID idCaso) {
         return repository.existsByIdClienteAndIdAdvogadoAndIdCaso(idCliente, idAdvogado, idCaso);
     }

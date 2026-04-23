@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/conversas")
-@Tag(name = "Chat - Conversas", description = "Operações de criação, consulta e listagem de conversas do chat")
+@Tag(name = "Chat - Conversas", description = "Operacoes de criacao, consulta e listagem de conversas do chat")
 @SecurityRequirement(name = "Bearer")
 public class ConversaController {
 
@@ -76,7 +76,7 @@ public class ConversaController {
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Já existe conversa para este cliente, advogado e caso",
+                    description = "Ja existe conversa para este cliente, advogado e caso",
                     content = @Content(schema = @Schema(implementation = ApiExceptionHandler.ErroResponse.class))
             )
     })
@@ -88,7 +88,7 @@ public class ConversaController {
     @GetMapping
     @Operation(
             summary = "Listar conversas",
-            description = "Lista as conversas de um cliente ou de um advogado. Informe apenas um dos parâmetros."
+            description = "Lista as conversas de um cliente, de um advogado ou de um caso. Informe apenas um dos parametros."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -101,7 +101,7 @@ public class ConversaController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Parâmetros inválidos",
+                    description = "Parametros invalidos",
                     content = @Content(schema = @Schema(implementation = ApiExceptionHandler.ErroResponse.class))
             )
     })
@@ -109,23 +109,40 @@ public class ConversaController {
             @Parameter(description = "UUID do cliente para listar suas conversas", example = "22222222-2222-2222-2222-222222222222")
             @RequestParam(required = false) UUID clienteId,
             @Parameter(description = "UUID do advogado para listar suas conversas", example = "33333333-3333-3333-3333-333333333333")
-            @RequestParam(required = false) UUID advogadoId) {
+            @RequestParam(required = false) UUID advogadoId,
+            @Parameter(description = "UUID do caso para listar suas conversas", example = "44444444-4444-4444-4444-444444444444")
+            @RequestParam(required = false) UUID casoId) {
 
-        if ((clienteId == null && advogadoId == null) || (clienteId != null && advogadoId != null)) {
-            throw new IllegalArgumentException("Informe apenas clienteId ou advogadoId para listar as conversas");
+        int filtrosInformados = 0;
+        if (clienteId != null) {
+            filtrosInformados++;
+        }
+        if (advogadoId != null) {
+            filtrosInformados++;
+        }
+        if (casoId != null) {
+            filtrosInformados++;
+        }
+
+        if (filtrosInformados != 1) {
+            throw new IllegalArgumentException("Informe apenas um entre clienteId, advogadoId ou casoId para listar as conversas");
         }
 
         if (clienteId != null) {
             return ResponseEntity.ok(listarConversasUseCase.listarPorCliente(clienteId));
         }
 
-        return ResponseEntity.ok(listarConversasUseCase.listarPorAdvogado(advogadoId));
+        if (advogadoId != null) {
+            return ResponseEntity.ok(listarConversasUseCase.listarPorAdvogado(advogadoId));
+        }
+
+        return ResponseEntity.ok(listarConversasUseCase.listarPorCaso(casoId));
     }
 
     @GetMapping("/{idConversa}")
     @Operation(
             summary = "Buscar conversa por id",
-            description = "Retorna os dados de uma conversa específica"
+            description = "Retorna os dados de uma conversa especifica"
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -135,7 +152,7 @@ public class ConversaController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Conversa não encontrada",
+                    description = "Conversa nao encontrada",
                     content = @Content(schema = @Schema(implementation = ApiExceptionHandler.ErroResponse.class))
             )
     })
@@ -146,7 +163,7 @@ public class ConversaController {
     @GetMapping("/{idConversa}/mensagens")
     @Operation(
             summary = "Listar mensagens da conversa",
-            description = "Retorna o histórico de mensagens de uma conversa, ordenado por data de envio"
+            description = "Retorna o historico de mensagens de uma conversa, ordenado por data de envio"
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -159,7 +176,7 @@ public class ConversaController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Conversa não encontrada",
+                    description = "Conversa nao encontrada",
                     content = @Content(schema = @Schema(implementation = ApiExceptionHandler.ErroResponse.class))
             )
     })

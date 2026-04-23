@@ -10,21 +10,18 @@ import java.util.UUID;
 public class BuscarConversaPorIdUseCase {
 
     private final ConversaGateway conversaGateway;
+    private final ConversaResponseAssembler conversaResponseAssembler;
 
-    public BuscarConversaPorIdUseCase(ConversaGateway conversaGateway) {
+    public BuscarConversaPorIdUseCase(ConversaGateway conversaGateway,
+                                      ConversaResponseAssembler conversaResponseAssembler) {
         this.conversaGateway = conversaGateway;
+        this.conversaResponseAssembler = conversaResponseAssembler;
     }
 
     public ConversaResponse executar(UUID idConversa) {
         Conversa conversa = conversaGateway.buscarPorId(idConversa)
-                .orElseThrow(() -> new NoSuchElementException("Conversa não encontrada"));
+                .orElseThrow(() -> new NoSuchElementException("Conversa nao encontrada"));
 
-        return new ConversaResponse(
-                conversa.getIdConversa(),
-                conversa.getIdCliente(),
-                conversa.getIdAdvogado(),
-                conversa.getIdCaso(),
-                conversa.getCriadoEm()
-        );
+        return conversaResponseAssembler.montar(conversa);
     }
 }
