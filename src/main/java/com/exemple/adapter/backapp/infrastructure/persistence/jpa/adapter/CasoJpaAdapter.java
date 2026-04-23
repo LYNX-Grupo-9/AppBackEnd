@@ -8,6 +8,7 @@ import com.exemple.adapter.backapp.infrastructure.persistence.jpa.repository.Cas
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -31,9 +32,15 @@ public class CasoJpaAdapter implements CasoGateway {
 
     @Override
     public List<Caso> buscarPorCliente(UUID idCliente) {
-        return repository.findByIdCliente(idCliente)
+        return repository.findByIdClienteOrderByDataCriacaoDesc(idCliente)
                 .stream()
                 .map(CasoMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Caso> buscarPorId(UUID idCaso) {
+        return repository.findById(idCaso)
+                .map(CasoMapper::toDomain);
     }
 }
