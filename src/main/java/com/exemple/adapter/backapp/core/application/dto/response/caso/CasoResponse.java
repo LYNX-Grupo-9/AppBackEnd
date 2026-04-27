@@ -1,5 +1,7 @@
 package com.exemple.adapter.backapp.core.application.dto.response.caso;
 
+import com.exemple.adapter.backapp.core.application.dto.response.conversa.ClienteResumoResponse;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -10,5 +12,6 @@ public record CasoResponse(
         String descricao,
         String status,
         LocalDate dataCriacao,
-        String analiseIa
+        String analiseIa,
+        ClienteResumoResponse cliente
 ) {}

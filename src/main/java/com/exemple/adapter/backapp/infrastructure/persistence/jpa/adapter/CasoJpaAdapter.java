@@ -39,6 +39,14 @@ public class CasoJpaAdapter implements CasoGateway {
     }
 
     @Override
+    public List<Caso> buscarPorStatus(String status) {
+        return repository.findByStatusOrderByDataCriacaoDesc(status)
+                .stream()
+                .map(CasoMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<Caso> buscarPorId(UUID idCaso) {
         return repository.findById(idCaso)
                 .map(CasoMapper::toDomain);

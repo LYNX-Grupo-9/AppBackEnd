@@ -9,23 +9,18 @@ import java.util.UUID;
 public class ListarCasosDoClienteUseCase {
 
     private final CasoGateway casoGateway;
+    private final CasoResponseAssembler casoResponseAssembler;
 
-    public ListarCasosDoClienteUseCase(CasoGateway casoGateway) {
+    public ListarCasosDoClienteUseCase(CasoGateway casoGateway,
+                                       CasoResponseAssembler casoResponseAssembler) {
         this.casoGateway = casoGateway;
+        this.casoResponseAssembler = casoResponseAssembler;
     }
 
     public List<CasoResponse> executar(UUID idCliente) {
         return casoGateway.buscarPorCliente(idCliente)
                 .stream()
-                .map(caso -> new CasoResponse(
-                        caso.getIdCaso(),
-                        caso.getAreaDireito(),
-                        caso.getTitulo(),
-                        caso.getDescricao(),
-                        caso.getStatus(),
-                        caso.getDataCriacao(),
-                        caso.getAnaliseIa()
-                ))
+                .map(casoResponseAssembler::montar)
                 .toList();
     }
 }

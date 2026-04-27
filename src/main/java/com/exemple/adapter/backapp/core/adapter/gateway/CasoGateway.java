@@ -9,5 +9,6 @@ import java.util.UUID;
 public interface CasoGateway {
     Caso criar(Caso caso);
     List<Caso> buscarPorCliente(UUID idCliente);
+    List<Caso> buscarPorStatus(String status);
     Optional<Caso> buscarPorId(UUID idCaso);
 }

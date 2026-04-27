@@ -10,9 +10,12 @@ import java.util.UUID;
 public class BuscarCasoPorIdDoClienteUseCase {
 
     private final CasoGateway casoGateway;
+    private final CasoResponseAssembler casoResponseAssembler;
 
-    public BuscarCasoPorIdDoClienteUseCase(CasoGateway casoGateway) {
+    public BuscarCasoPorIdDoClienteUseCase(CasoGateway casoGateway,
+                                           CasoResponseAssembler casoResponseAssembler) {
         this.casoGateway = casoGateway;
+        this.casoResponseAssembler = casoResponseAssembler;
     }
 
     public CasoResponse executar(UUID idCaso, UUID idClienteLogado) {
@@ -23,14 +26,6 @@ public class BuscarCasoPorIdDoClienteUseCase {
             throw new NoSuchElementException("Caso nao encontrado");
         }
 
-        return new CasoResponse(
-                caso.getIdCaso(),
-                caso.getAreaDireito(),
-                caso.getTitulo(),
-                caso.getDescricao(),
-                caso.getStatus(),
-                caso.getDataCriacao(),
-                caso.getAnaliseIa()
-        );
+        return casoResponseAssembler.montar(caso);
     }
 }

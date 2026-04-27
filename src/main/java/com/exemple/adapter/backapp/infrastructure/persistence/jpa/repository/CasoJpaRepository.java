@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface CasoJpaRepository extends JpaRepository<CasoEntity, UUID> {
     List<CasoEntity> findByIdClienteOrderByDataCriacaoDesc(UUID idCliente);
+    List<CasoEntity> findByStatusOrderByDataCriacaoDesc(String status);
 }

@@ -9,10 +9,12 @@ import com.exemple.adapter.backapp.core.application.usecase.AdvogadoInteressado.
 import com.exemple.adapter.backapp.core.application.usecase.AdvogadoInteressado.ListarAdvogadosInteressadosPorCasoUseCase;
 import com.exemple.adapter.backapp.core.application.usecase.Caso.BuscarCasoPorIdDoClienteUseCase;
 import com.exemple.adapter.backapp.core.application.usecase.Caso.CriarCasoUseCase;
+import com.exemple.adapter.backapp.core.application.usecase.Caso.ListarCasosAbertosUseCase;
 import com.exemple.adapter.backapp.core.application.usecase.Caso.ListarCasosDoClienteUseCase;
 import com.exemple.adapter.backapp.infrastructure.config.GerenciadorTokenJwt;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,7 @@ public class CasoController {
 
     private final CriarCasoUseCase criarCasoUseCase;
     private final ListarCasosDoClienteUseCase listarCasosDoClienteUseCase;
+    private final ListarCasosAbertosUseCase listarCasosAbertosUseCase;
     private final BuscarCasoPorIdDoClienteUseCase buscarCasoPorIdDoClienteUseCase;
     private final DemonstrarInteresseUseCase demonstrarInteresseUseCase;
     private final ListarAdvogadosInteressadosPorCasoUseCase listarAdvogadosInteressadosPorCasoUseCase;
@@ -38,12 +41,14 @@ public class CasoController {
 
     public CasoController(CriarCasoUseCase criarCasoUseCase,
                           ListarCasosDoClienteUseCase listarCasosDoClienteUseCase,
+                          ListarCasosAbertosUseCase listarCasosAbertosUseCase,
                           BuscarCasoPorIdDoClienteUseCase buscarCasoPorIdDoClienteUseCase,
                           DemonstrarInteresseUseCase demonstrarInteresseUseCase,
                           ListarAdvogadosInteressadosPorCasoUseCase listarAdvogadosInteressadosPorCasoUseCase,
                           GerenciadorTokenJwt gerenciadorTokenJwt) {
         this.criarCasoUseCase = criarCasoUseCase;
         this.listarCasosDoClienteUseCase = listarCasosDoClienteUseCase;
+        this.listarCasosAbertosUseCase = listarCasosAbertosUseCase;
         this.buscarCasoPorIdDoClienteUseCase = buscarCasoPorIdDoClienteUseCase;
         this.demonstrarInteresseUseCase = demonstrarInteresseUseCase;
         this.listarAdvogadosInteressadosPorCasoUseCase = listarAdvogadosInteressadosPorCasoUseCase;
@@ -56,6 +61,12 @@ public class CasoController {
 
         UUID idCliente = extrairIdClienteLogado(authorizationHeader);
         return ResponseEntity.ok(listarCasosDoClienteUseCase.executar(idCliente));
+    }
+
+    @GetMapping("/abertos")
+    @PreAuthorize("hasRole('ADVOGADO')")
+    public ResponseEntity<List<CasoResponse>> listarCasosAbertos() {
+        return ResponseEntity.ok(listarCasosAbertosUseCase.executar());
     }
 
     @GetMapping("/{id}")

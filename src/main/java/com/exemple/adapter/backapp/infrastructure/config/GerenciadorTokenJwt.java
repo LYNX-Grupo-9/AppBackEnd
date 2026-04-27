@@ -1,6 +1,9 @@
 package com.exemple.adapter.backapp.infrastructure.config;
 
+import com.exemple.adapter.backapp.core.application.dto.response.advogado.AdvogadoDetalhes;
 import com.exemple.adapter.backapp.core.application.dto.response.cliente.ClienteAppDetalhes;
+import com.exemple.adapter.backapp.infrastructure.persistence.jpa.repository.AdvogadoRepository;
+import com.exemple.adapter.backapp.infrastructure.persistence.jpa.repository.ClienteAppRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -19,11 +22,20 @@ import java.util.stream.Collectors;
 
 public class GerenciadorTokenJwt {
 
+    private final ClienteAppRepository clienteAppRepository;
+    private final AdvogadoRepository advogadoRepository;
+
     @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.validity}")
     private Long jwtTokenValidity;
+
+    public GerenciadorTokenJwt(ClienteAppRepository clienteAppRepository,
+                               AdvogadoRepository advogadoRepository) {
+        this.clienteAppRepository = clienteAppRepository;
+        this.advogadoRepository = advogadoRepository;
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -35,7 +47,17 @@ public class GerenciadorTokenJwt {
 
     public UUID getUserIdFromToken(String token) {
         String userId = getAllClaimsFromToken(token).get("userId", String.class);
-        return userId != null ? UUID.fromString(userId) : null;
+        if (userId != null && !userId.isBlank()) {
+            return UUID.fromString(userId);
+        }
+
+        String username = getUsernameFromToken(token);
+
+        return clienteAppRepository.findByEmail(username)
+                .map(cliente -> cliente.getIdClienteApp())
+                .orElseGet(() -> advogadoRepository.findByEmail(username)
+                        .map(advogado -> advogado.getIdAdvogado())
+                        .orElse(null));
     }
 
     public String gerarToken(final Authentication authentication) {
@@ -66,7 +88,7 @@ public class GerenciadorTokenJwt {
 
     public boolean validadeToken(String token, UserDetails userDetails) {
         String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return username.equalsIgnoreCase(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private Boolean isTokenExpired(String token) {
@@ -91,6 +113,10 @@ public class GerenciadorTokenJwt {
 
         if (principal instanceof ClienteAppDetalhes clienteAppDetalhes) {
             return clienteAppDetalhes.getCliente().getIdClienteApp();
+        }
+
+        if (principal instanceof AdvogadoDetalhes advogadoDetalhes) {
+            return advogadoDetalhes.getAdvogado().getIdAdvogado();
         }
 
         throw new IllegalStateException("Nao foi possivel extrair o id do usuario autenticado para gerar o token");

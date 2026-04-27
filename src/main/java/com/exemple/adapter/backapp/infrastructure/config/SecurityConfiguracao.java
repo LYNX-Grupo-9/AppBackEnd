@@ -1,6 +1,9 @@
 package com.exemple.adapter.backapp.infrastructure.config;
 
+import com.exemple.adapter.backapp.core.application.usecase.advogado.AutenticacaoAdvogadoUseCase;
 import com.exemple.adapter.backapp.core.application.usecase.cliente.AutenticacaoClienteUseCase;
+import com.exemple.adapter.backapp.infrastructure.persistence.jpa.repository.AdvogadoRepository;
+import com.exemple.adapter.backapp.infrastructure.persistence.jpa.repository.ClienteAppRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -28,10 +31,19 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguracao {
 
-    private final AutenticacaoClienteUseCase autenticacaoService;
+    private final AutenticacaoClienteUseCase autenticacaoClienteUseCase;
+    private final AutenticacaoAdvogadoUseCase autenticacaoAdvogadoUseCase;
+    private final ClienteAppRepository clienteAppRepository;
+    private final AdvogadoRepository advogadoRepository;
 
-    public SecurityConfiguracao(AutenticacaoClienteUseCase autenticacaoService) {
-        this.autenticacaoService = autenticacaoService;
+    public SecurityConfiguracao(AutenticacaoClienteUseCase autenticacaoClienteUseCase,
+                                AutenticacaoAdvogadoUseCase autenticacaoAdvogadoUseCase,
+                                ClienteAppRepository clienteAppRepository,
+                                AdvogadoRepository advogadoRepository) {
+        this.autenticacaoClienteUseCase = autenticacaoClienteUseCase;
+        this.autenticacaoAdvogadoUseCase = autenticacaoAdvogadoUseCase;
+        this.clienteAppRepository = clienteAppRepository;
+        this.advogadoRepository = advogadoRepository;
     }
 
     private static final String[] URLS_PERMITIDAS = {
@@ -76,18 +88,18 @@ public class SecurityConfiguracao {
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.authenticationProvider(new AutenticacaoProvider(autenticacaoService, passwordEncoder()));
+        builder.authenticationProvider(new AutenticacaoProvider(autenticacaoClienteUseCase, passwordEncoder()));
         return builder.build();
     }
 
     @Bean
     public AutenticacaoFilter jwtAutenticacaoFilterBean() {
-        return new AutenticacaoFilter(autenticacaoService, jwtAuthenticationUtilBean());
+        return new AutenticacaoFilter(autenticacaoClienteUseCase, autenticacaoAdvogadoUseCase, jwtAuthenticationUtilBean());
     }
 
     @Bean
     public GerenciadorTokenJwt jwtAuthenticationUtilBean() {
-        return new GerenciadorTokenJwt();
+        return new GerenciadorTokenJwt(clienteAppRepository, advogadoRepository);
     }
 
     @Bean
