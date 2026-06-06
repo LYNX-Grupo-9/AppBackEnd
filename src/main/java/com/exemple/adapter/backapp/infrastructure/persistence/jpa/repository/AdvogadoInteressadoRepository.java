@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface AdvogadoInteressadoRepository extends JpaRepository<AdvogadoInteressadoEntity, UUID> {
     List<AdvogadoInteressadoEntity> findByCasoId(UUID casoId);
+    long countByCasoId(UUID casoId);
 }
