@@ -4,6 +4,7 @@ import com.exemple.adapter.backapp.core.application.dto.command.mensagem.EnviarM
 import com.exemple.adapter.backapp.core.application.dto.response.mensagem.EnviarMensagemResponse;
 import com.exemple.adapter.backapp.core.application.usecase.mensagem.EnviarMensagemUseCase;
 import com.exemple.adapter.backapp.infrastructure.web.ApiExceptionHandler;
+import com.exemple.adapter.backapp.infrastructure.web.websocket.ChatWebSocketHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,9 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class MensagemController {
 
     private final EnviarMensagemUseCase useCase;
+    private final ChatWebSocketHandler chatWebSocketHandler;
 
-    public MensagemController(EnviarMensagemUseCase useCase) {
+    public MensagemController(EnviarMensagemUseCase useCase,
+                              ChatWebSocketHandler chatWebSocketHandler) {
         this.useCase = useCase;
+        this.chatWebSocketHandler = chatWebSocketHandler;
     }
 
     @PostMapping
@@ -66,6 +70,7 @@ public class MensagemController {
             @RequestBody EnviarMensagemCommand command) {
 
         EnviarMensagemResponse response = useCase.executar(command);
+        chatWebSocketHandler.publicarMensagem(response);
 
         return ResponseEntity.status(201).body(response);
     }

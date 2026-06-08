@@ -55,6 +55,7 @@ public class SecurityConfiguracao {
             "/api/advogados/cadastrar",
             "/api/clientes/login",
             "/api/clientes/cadastrar",
+            "/ws/**",
             "/h2-console/**",
             "/error/**",
             "/v3/api-docs/**"
